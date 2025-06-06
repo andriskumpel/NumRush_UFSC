@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Num Rush 3D - Teste de Jogo</title>
+    <title>Num Rush 3D - Edição Escolar</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -143,9 +143,9 @@
 <body>
     <div class="game-container">
         <div id="startScreen" class="screen">
-            <h1 class="text-4xl mb-4">Num Rush 3D</h1>
-            <img src="https://placehold.co/200x100/4299E1/FFFFFF?text=Num+Rush+3D&font=press-start-2p" alt="Logo Num Rush 3D" class="mb-8 rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/200x100/E2E8F0/4A5568?text=Erro+Logo&font=press-start-2p';">
-            <p class="mb-8 text-lg">Pule para tocar e explodir a caixa com a resposta certa! Use ESPAÇO para pular.</p>
+            <h1 class="text-4xl mb-4">Num Rush 3D - Edição Escolar</h1>
+            <img src="https://placehold.co/200x100/4299E1/FFFFFF?text=Num+Rush+3D&font=press-start-2p" alt="Logo Num Rush 3D - Edição Escolar" class="mb-8 rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/200x100/E2E8F0/4A5568?text=Erro+Logo&font=press-start-2p';">
+            <p class="mb-8 text-lg">Ambientado em uma escola, acerte as questões de matemática pulando sobre a resposta correta. Use ESPAÇO para pular.</p>
             <button id="startButton">Iniciar Jogo</button>
         </div>
 
@@ -346,10 +346,10 @@
             characterGroup.position.y = 0; 
             scene.add(characterGroup);
 
-            const groundLaneMaterial = new THREE.MeshStandardMaterial({ color: 0x404040, roughness: 0.95 }); 
+            const groundLaneMaterial = new THREE.MeshStandardMaterial({ color: 0xb5b5b5, roughness: 0.95 });
             const groundLaneWidth = LANE_WIDTH_VISUAL * LANE_COUNT + ANSWER_BOX_SPACING * (LANE_COUNT -1) + LANE_WIDTH_VISUAL; 
             const groundLaneGeo = new THREE.BoxGeometry(groundLaneWidth , 0.1, LANE_DEPTH); 
-            const lineMaterial = new THREE.LineBasicMaterial({ color: 0x6b7280 }); 
+            const lineMaterial = new THREE.LineBasicMaterial({ color: 0x9ca3af });
             
             for (let j = 0; j < LANE_SEGMENTS; j++) { 
                 const groundLane = new THREE.Mesh(groundLaneGeo, groundLaneMaterial.clone());
@@ -386,34 +386,31 @@
                 answerBoxes.push(answerBox);
             }
 
-            const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x85533c, roughness: 0.9 });
-            const leavesMaterial = new THREE.MeshStandardMaterial({ color: 0x2f855a, roughness: 0.9 }); 
-            const trunkGeo = new THREE.CylinderGeometry(0.2, 0.3, 2, 8);
-            const leavesGeo = new THREE.ConeGeometry(0.8, 2.5, 8);
-            const crystalMaterial = new THREE.MeshStandardMaterial({ color: 0x81e6d9, emissive: 0x4fd1c5, emissiveIntensity: 0.3, roughness: 0.4, metalness: 0.2 }); 
-            const crystalGeo = new THREE.ConeGeometry(0.5, 1.5, 6); 
+            const bookMaterial = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.8 });
+            const bookGeo = new THREE.BoxGeometry(0.6, 0.15, 0.8);
+            const pencilMaterial = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.6 });
+            const pencilGeo = new THREE.CylinderGeometry(0.05, 0.05, 1, 8);
+            const pencilTipMaterial = new THREE.MeshStandardMaterial({ color: 0x9ca3af, roughness: 0.4 });
+            const pencilTipGeo = new THREE.ConeGeometry(0.05, 0.2, 8);
 
-            for (let i = 0; i < SIDE_ELEMENT_COUNT * 2; i++) { 
+            for (let i = 0; i < SIDE_ELEMENT_COUNT * 2; i++) {
                 let element;
-                if (Math.random() < 0.6) { 
-                    element = new THREE.Group();
-                    const trunk = new THREE.Mesh(trunkGeo, trunkMaterial);
-                    trunk.castShadow = true; trunk.position.y = 1;
-                    const leaves = new THREE.Mesh(leavesGeo, leavesMaterial);
-                    leaves.castShadow = true; leaves.position.y = 2 + 1.25; 
-                    element.add(trunk); element.add(leaves);
-                } else { 
-                    element = new THREE.Mesh(crystalGeo, crystalMaterial);
+                if (Math.random() < 0.5) {
+                    element = new THREE.Mesh(bookGeo, bookMaterial.clone());
                     element.castShadow = true;
-                    element.position.y = 0.75; 
-                    element.rotation.x = (Math.random() - 0.5) * 0.5;
-                    element.rotation.z = (Math.random() - 0.5) * 0.5;
+                    element.position.y = 0.1;
+                } else {
+                    element = new THREE.Group();
+                    const body = new THREE.Mesh(pencilGeo, pencilMaterial);
+                    body.castShadow = true; body.position.y = 0.5;
+                    const tip = new THREE.Mesh(pencilTipGeo, pencilTipMaterial);
+                    tip.castShadow = true; tip.position.y = 1.1;
+                    element.add(body); element.add(tip);
                 }
-                
-                const side = (i < SIDE_ELEMENT_COUNT) ? -1 : 1; 
-                element.position.x = side * (groundLaneWidth / 2 + 1 + Math.random() * 4); 
-                element.position.z = -LANE_DEPTH * LANE_SEGMENTS + Math.random() * (LANE_DEPTH * LANE_SEGMENTS * 2); 
-                if (element.type !== "Mesh") element.position.y += Math.random() * 0.2 - 0.1; 
+
+                const side = (i < SIDE_ELEMENT_COUNT) ? -1 : 1;
+                element.position.x = side * (groundLaneWidth / 2 + 1 + Math.random() * 4);
+                element.position.z = -LANE_DEPTH * LANE_SEGMENTS + Math.random() * (LANE_DEPTH * LANE_SEGMENTS * 2);
                 scene.add(element);
                 sideElements.push(element);
             }
